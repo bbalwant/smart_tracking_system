@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+</head>
+<body>
+    <h1>Backend Connection Test</h1>
+    <button onclick="testConnection()">Test Backend Connection</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testConnection() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Testing...\n';
+            
+            const apiUrl = 'http://localhost:8000';
+            
+            try {
+                // Test health endpoint
+                resultEl.textContent += `Testing: ${apiUrl}/health\n`;
+                const healthResponse = await fetch(`${apiUrl}/health`);
+                const healthData = await healthResponse.json();
+                resultEl.textContent += `✅ Health check: ${JSON.stringify(healthData, null, 2)}\n\n`;
+                
+                // Test login endpoint
+                resultEl.textContent += `Testing: ${apiUrl}/api/auth/login\n`;
+                const loginResponse = await fetch(`${apiUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: 'test'
+                    })
+                });
+                const loginData = await loginResponse.json();
+                resultEl.textContent += `✅ Login endpoint: ${JSON.stringify(loginData, null, 2)}\n`;
+                
+            } catch (error) {
+                resultEl.textContent += `❌ Error: ${error.message}\n`;
+                resultEl.textContent += `Error type: ${error.constructor.name}\n`;
+                resultEl.textContent += `Stack: ${error.stack}\n`;
+            }
+        }
+    </script>
+</body>
+</html>
+
